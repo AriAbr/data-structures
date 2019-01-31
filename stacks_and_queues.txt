@@ -1,0 +1,125 @@
+# Exercises
+
+1. What is the main difference between a stack and a queue?
+
+The difference between a stack and a queue has to do with which items are
+retrieved first. In a stack the last item added is retrieved first, like in
+a physical stack of objects. In a queue the first item added it retrieved first,
+like in a line of people.
+
+2. What are the similarities between stacks and queues?
+
+Both provide ways to store and retrieve items waiting to be acted on in an
+ordered and organized way.
+
+3. Imagine you are an engineer tasked with implementing the UNDO and REDO
+options in a word processor such as Microsoft Word. Which data structure would
+you use for each option and why?
+
+UNDO would use a stack structure since you would want to undo the last thing
+you did first. REDO would also use a stack that would be filled each time undo
+is called. When REDO is called, you would want the last thing you undid to be
+first thing redone.
+
+# Programming Questions
+
+1. Given a string, reverse it using a stack. For example, the string "Bloc!"
+should be converted to "!colB".
+
+class stack {
+  constructor() {
+    this.items = [];
+  }
+
+  push(element) {
+    this.items.push(element);
+  }
+
+  pop() {
+    if (this.items.length === 0) {
+      return "Underflow";
+    }
+    return this.items.pop();
+  }
+}
+
+function reverse (original) {
+  var reverseStack  = new stack;
+  for (let i = 0; i<original.length; i++){
+    reverseStack.push(original[i]);
+  }
+  var reversed = "";
+  while (reverseStack.items.length > 0) {
+    currentElement = reverseStack.pop()
+    reversed = reversed+currentElement;
+  }
+
+  return reversed;
+}
+
+2. Implement the pop method of a stack using one queue. Make a FIFO data
+structure mirror the functionality of a LIFO data structure. Since the internal
+list is not the same as defined in the checkpoint, it may help to rewrite the
+pseudocode first.
+To delete an item, take all of the elements in the queue one at a time and put
+them at the end of the queue, except for the last one which should be removed
+and returned.
+
+class Queue {
+  constructor() {
+    this.items = [];
+  }
+
+  enqueue(element) {
+    this.items.push(element);
+  }
+
+  dequeue() {
+    if (this.items.length === 0) {
+      return "Underflow";
+    }
+    return this.items.shift();
+  }
+}
+
+class PoppingQueue extends Queue {
+  constructor() {
+    super();
+  }
+
+  pop() {
+    var queueLength = this.items.length;
+    for (let i = 0; i < queueLength; i++) {
+      var currentElement = this.dequeue();
+      if (i !== queueLength-1) {
+        this.enqueue(currentElement);
+      } else {
+        return currentElement;
+      }
+    }
+  }
+}
+
+
+3. Implement the enqueue and dequeue methods defined in the checkpoint inside
+your own Queue class.
+
+(See the `Queue` class in my previous answer)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.
