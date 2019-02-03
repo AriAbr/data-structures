@@ -1,0 +1,113 @@
+# Exercises
+
+1. What are some pros and cons of using linked lists instead of arrays?
+
+They are better for memory because they do not create empty placeholders and
+their elements can be stored independently at any available memory location.
+However, they also make it more difficult to access individual elements. Since
+the elements are not indexed, you have to start at the beginning and search
+through the entire list until the element is found.
+
+2. Come up with a real world example of a linked list.
+
+A real world example of a linked list might be a series of sources, where
+each source has a single footnote leading to another source.
+
+# Programming Questions
+
+1. The linked list push function should take a value, create a node, and add it
+to the end of a list. Below is pseudocode for a push function for a singly
+linked list. However, there is something wrong with it. Submit both an
+explanation of the bug and a functional implementation of the method.
+
+The bug is that if the list has a head already, the given push function will
+make the inputted element the second element in the list instead of first
+checking if there are more nodes after that.
+
+Functional implementation: See the `push` method in the LinkedList class below.
+
+2. Given an unsorted singly linked list, remove all duplicates from the linked
+list.
+Example
+Input: a -> c -> d -> d -> a
+Output: a -> c -> d
+
+>> See the `removeDuplicates` method in the LinkedList class below.
+
+3. Given an unsorted singly linked list, reverse it.
+Example
+Input: a -> b -> c -> d
+Output: d -> c -> b -> a
+
+>> See the `reverse` method in the LinkedList class below.
+
+===============================================================================
+
+
+class Node {
+  constructor(element) {
+    this.value = element;
+    this.next = null;
+  }
+}
+
+class LinkedList {
+  constructor () {
+    this.head = null;
+  }
+
+  print() {
+    var current = this.head;
+
+    while (current !== null) {
+      console.log(current.value);
+      current = current.next;
+    }
+  }
+
+  push (element) {
+    var newNode = new Node(element);
+
+    if (this.head === null) {
+      this.head = newNode;
+    } else {
+      var current = this.head;
+      while (current.next !== null) {
+        current = current.next;
+      }
+      current.next = newNode;
+    }
+  }
+
+  removeDuplicates () {
+    var current = this.head;
+    while (current.next !== null) {
+      var subCurrent = current;
+      while (subCurrent.next !== null) {
+        while (subCurrent.next.value === current.value) {
+          subCurrent.next = subCurrent.next.next;
+          if (subCurrent.next === null) {
+            return;
+          }
+        }
+        subCurrent = subCurrent.next;
+      }
+      current = current.next;
+    }
+  }
+
+  reverse () {
+    var reversedList = new LinkedList;
+    var current = this.head;
+    while (current.next !== null) {
+      while (current.next.next !== null) {
+        current = current.next;
+      }
+      reversedList.push(current.next.value);
+      current.next = null;
+      current = this.head
+    }
+    reversedList.push(this.head.value);
+    this.head = reversedList.head;
+  }
+}
