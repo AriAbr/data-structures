@@ -88,15 +88,15 @@ phone numbers. Store this information in a hash table.
 var HashMapCustomers = new Map();
 
 function addCustomer(name, address, phoneNumber) {
-  var newCustomer = Object.create();
+  var newCustomer = new Object;
   newCustomer.name = name;
   newCustomer.address = address;
   newCustomer.phoneNumber = phoneNumber;
-  HashMapNote.set(phoneNumber, newCustomer);
+  HashMapCustomers.set(phoneNumber, newCustomer);
 }
 
 function findCustomer(phoneNumber) {
-  HashMapNote.get(phoneNumber);
+  return HashMapCustomers.get(phoneNumber);
 }
 
 
@@ -113,15 +113,20 @@ function addItem(item) {
   }
 }
 
-function removeItem(name) {
+function removeItem(item) {
   if (HashMapInventory.get(item) > 0) {
     HashMapInventory.set(item, HashMapInventory.get(item)-1);
   }
 }
 
-function getItemAmount(name) {
-  HashMapInventory.get(item);
+function getItemAmount(item) {
+  if (!HashMapInventory.get(item)) {
+    return 0;
+  } else {
+    return HashMapInventory.get(item);
+  }
 }
+
 
 8. Build a system that allows digital copies of newspapers to be entered and
 searched by publisher and publication date. Use hash tables to store the
@@ -130,11 +135,11 @@ necessary data.
 var HashMapNewspapers = new Map();
 
 function addNewspaper(name, publisher, publicationDate) {
-  var newNewspaper = Object.create();
+  var newNewspaper = new Object;
   newNewspaper.name = name;
   newNewspaper.publisher = publisher;
   newNewspaper.publicationDate = publicationDate;
-  HashMapNote.set(name, newNewspaper);
+  HashMapNewspapers.set(name, newNewspaper);
 }
 
 function searchNewspapers(publisher, publicationDate) {
