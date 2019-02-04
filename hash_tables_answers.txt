@@ -1,0 +1,162 @@
+# Checkpoint Work
+
+> You're trying to create a note by cutting words out of a newspaper to form
+sentences. Figure out if your note can be formed from a given newspaper.
+
+function createNote(note, newspaper){
+  var HashMapNote = new Map();
+  var HashMapNewspaper = new Map();
+  var letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+  var noteWord = "";
+  var newspaperWord = "";
+  for (let i = 0; i <= note.length; i++) {
+    var currentCharacter = note[i];
+    if (letters.includes(currentCharacter)) {
+      noteWord = noteWord+currentCharacter;
+    } else if (!HashMapNote.get(noteWord)) {
+      HashMapNote.set(noteWord, 1);
+      noteWord = "";
+    } else {
+      HashMapNote.set(noteWord, HashMapNote.get(noteWord)+1);
+      noteWord = "";
+    }
+  }
+  for (let i = 0; i <= newspaper.length; i++) {
+    var currentCharacter = newspaper[i];
+    if (letters.includes(currentCharacter)) {
+      newspaperWord = newspaperWord+currentCharacter;
+    } else if (!HashMapNewspaper.get(newspaperWord)) {
+      HashMapNewspaper.set(newspaperWord, 1);
+      newspaperWord = "";
+    } else {
+      HashMapNewspaper.set(newspaperWord, HashMapNewspaper.get(newspaperWord)+1);
+      newspaperWord = "";
+    }
+  }
+  for (var [key, value] of HashMapNote) {
+    if (!HashMapNewspaper.get(key)) {
+      return false;
+    } else if (HashMapNewspaper.get(key) < value) {
+      return false
+    }
+  }
+  return true;
+}
+
+
+
+# Exercises
+
+1. What is a hash table?
+
+A hash table is a data structure similar to an array except that values can be
+accessed by their keys in addition to their indices.
+
+2. What is hashing?
+
+Hashing is the process a hash table uses to convert inputted keys into numerical
+indices.
+
+3. How does a hash table store data?
+
+After converting the inputted key to an index, the hash table stores the
+key/value pair in an array at that index.
+
+4. How are hash tables and objects different?
+
+Objects hold related data of different types. Hash tables hold collections of
+similar data.
+
+5. Determine whether you would use a hash table or an object to store each of
+the following pieces of data:
+
+- A list of pets and their unique names.
+    Hash table
+- The name, age, and the birthday of your best friend.
+    Object
+- The name and location of every company in a given city.
+    Hash table
+- All of the books checked out from a library by a particular individual.
+    Object
+- The primary and secondary phone numbers for a contact.
+    Object
+
+6. Build a system that allows a sales associate to enter a customer's name,
+address, and phone number into the system and look up customers using their
+phone numbers. Store this information in a hash table.
+
+var HashMapCustomers = new Map();
+
+function addCustomer(name, address, phoneNumber) {
+  var newCustomer = Object.create();
+  newCustomer.name = name;
+  newCustomer.address = address;
+  newCustomer.phoneNumber = phoneNumber;
+  HashMapNote.set(phoneNumber, newCustomer);
+}
+
+function findCustomer(phoneNumber) {
+  HashMapNote.get(phoneNumber);
+}
+
+
+7. Build a system that allows a store owner to track their store's inventory
+using a hash table for storage.
+
+var HashMapInventory = new Map();
+
+function addItem(item) {
+  if (!HashMapInventory.get(item)){
+    HashMapInventory.set(item, 1);
+  } else {
+    HashMapInventory.set(item, HashMapInventory.get(item)+1);
+  }
+}
+
+function removeItem(name) {
+  if (HashMapInventory.get(item) > 0) {
+    HashMapInventory.set(item, HashMapInventory.get(item)-1);
+  }
+}
+
+function getItemAmount(name) {
+  HashMapInventory.get(item);
+}
+
+8. Build a system that allows digital copies of newspapers to be entered and
+searched by publisher and publication date. Use hash tables to store the
+necessary data.
+
+var HashMapNewspapers = new Map();
+
+function addNewspaper(name, publisher, publicationDate) {
+  var newNewspaper = Object.create();
+  newNewspaper.name = name;
+  newNewspaper.publisher = publisher;
+  newNewspaper.publicationDate = publicationDate;
+  HashMapNote.set(name, newNewspaper);
+}
+
+function searchNewspapers(publisher, publicationDate) {
+  var HashMapMatchedNewspapers = new Map();
+  for (var [key, value] of HashMapNewspapers) {
+    if (isMatch(value, publisher, publicationDate)) {
+      HashMapMatchedNewspapers.set(key, value);
+    }
+  }
+  return HashMapMatchedNewspapers;
+}
+
+function isMatch(value, publisher, publicationDate) {
+  if (value.publisher === publisher && value.publicationDate === publicationDate) {
+    return true;
+  } else if (publisher === "" && value.publicationDate === publicationDate) {
+    return true;
+  } else if (publicationDate === "" && value.publisher === publisher) {
+    return true;
+  } else if (publisher === "" && publicationDate === "") {
+    return true;
+  } else {
+    return false;
+  }
+}
