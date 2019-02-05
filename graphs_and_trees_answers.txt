@@ -1,0 +1,194 @@
+# Exercises
+
+1. What is a binary tree and what makes it unique to other trees?
+
+A binary tree is a data structure in which each Node after (and including) the
+head Node can have up to two child Nodes. It is distinct from other trees in
+that Nodes in other trees can have more that two child Nodes.
+
+2. What is a heuristic?
+
+A heuristic is a methods of solving a problem which sacrifices accuracy of the
+result in order to save time or effort required to produce the result.
+
+3. What is another problem besides the shortest-path problem that requires the
+use of heuristics?
+
+Search engines need to use heuristics to determine which results will be most
+relevant to the user. Since there is no absolute way to determine which results
+are the best, they have to use some alternative method to decide which results
+will show up and in what order.
+
+4. What is the difference between a depth-first search and a breadth-first
+search?
+
+A depth-first search starts by diving down a single branch of a tree in search
+of and element. If the element is found, it stops. Otherwise, it jumps back up
+one Node switches over to another child and then follow the same process until
+the element is found.
+
+5. Explain in your own words what an undirected, a-cyclic, unweighted graph is.
+
+It is a graph which does not have any implied direction between Nodes, does not
+contain any loops and the cost of traveling between any two connected Nodes is
+considered equal.
+
+6. What kind of graph is a binary search tree?
+
+It is a directed, a-cyclic, unweighted graph.
+
+
+# Programming Questions
+
+1. Given a Binary Search Tree and a value, write a function that checks to see
+whether the value exists within the tree.
+
+My function will start by checking the root Node. If it matches it will return
+true. If not, it will be stored in a separate array to allow the function to
+return its right child later. The function will then continue checking down the
+left path, saving each Node in the separate array, until it reaches a Node with
+no left. At that point, the function will add that Node to the array. It will
+then begin looping backwards through each Node in the array. It will first
+remove the current Node from the array and store it. If that Node has a right
+child Node, it will create a tree with the right child Node as the root and then
+the function will run recursively on that tree. Eventually, the function will
+come back to check every Node in the tree. If the element is not found it
+will return false.
+
+See the searchBinaryTree method in the BinarySearchTree below for my
+implementation.
+
+2. Given a Binary Search Tree and two nodes, n1 and n2, write a function that
+finds the distance between the two nodes.
+
+My strategy for this problem was to first create a method, modeled on my
+searchBinaryTree method from the previous problem, that would find the a node in
+the binary tree and return an array containing each of the Nodes between it and
+the root Node, thus representing the path to that Node. I then created a second
+method which takes two Nodes, and calls the first method on those Nodes to find
+their paths. It then removes any elements at the beginning of the arrays which
+are found in both arrays. It then adds whatever remains of the lengths of the
+two arrays and returns the number calculated.
+
+===============================================================================
+class Node {
+  constructor(element) {
+    this.value = element;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+class BinarySearchTree {
+  constructor () {
+    this.root = null;
+  }
+
+  newRoot(node){
+    this.root = node;
+  }
+
+  insert (value) {
+    let node = new Node(value);
+    if (!this.root) {
+      this.root = node;
+    } else {
+      let current = this.root;
+      while(!!current) {
+        if (node.value < current.value) {
+          if (!current.left) {
+            current.left = node;
+            break;
+          }
+          current = current.left;
+        } else if(node.value > current.value){
+          if(!current.right){
+            current.right = node;
+            break;
+          }
+          current = current.right;
+        } else {
+          break;
+        }
+      }
+    }
+    return this;
+  }
+
+  searchBinaryTree(value) {
+    var current = this.root;
+    var waitlist = [];
+    if (current.value === value) {
+      return true;
+    }
+
+    while (current.left !== null) {
+      waitlist.push(current);
+      current = current.left;
+      if (current.value === value) {
+        return true;
+      }
+    }
+    waitlist.push(current);
+
+    for (let i = waitlist.length-1; i>=0; i--) {
+      var nodeOnCall = waitlist.pop();
+      if (nodeOnCall.right !== null) {
+        var SubTree = new BinarySearchTree;
+        SubTree.newRoot(nodeOnCall.right);
+        if (SubTree.searchBinaryTree(value)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  getNodeToNodeDistnace(n1, n2) {
+    var n1Path = this.getPathToNode(n1);
+    var n2Path = this.getPathToNode(n2);
+
+    for (let i = 0; i < n1Path.length; i++) {
+      if (n1Path[i] === n2Path[i]) {
+        n1Path.shift();
+        n2Path.shift();
+      } else {
+        break;
+      }
+    }
+
+    var nodeDistance = n1Path.length + n2Path.length;
+    return nodeDistance;
+  }
+
+  getPathToNode(node) {
+    var nodePathArray = [this.root];
+
+    var current = this.root;
+    var tempPath = [this.root];
+    if (current.value === node) {
+      return tempPath;
+    }
+
+    while (current.left !== null) {
+      current = current.left;
+      tempPath.push(current);
+      if (current.value === node) {
+        return tempPath;
+      }
+    }
+
+    for (let i = tempPath.length-1; i>=0; i--) {
+      var nodeOnCall = tempPath[tempPath.length-1];
+      if (nodeOnCall.right !== null) {
+        var SubTree = new BinarySearchTree;
+        SubTree.newRoot(nodeOnCall.right);
+        if (SubTree.getPathToNode(node)) {
+          tempPath = tempPath.concat(SubTree.getPathToNode(node))
+          return tempPath;
+        }
+      }
+      tempPath.pop();
+    }
+  }
+}
