@@ -70,6 +70,9 @@ their paths. It then removes any elements at the beginning of the arrays which
 are found in both arrays. It then adds whatever remains of the lengths of the
 two arrays and returns the number calculated.
 
+See the getPathToNode and getNodeToNodeDistance methods in the BinarySearchTree
+below for my implementation.
+
 ===============================================================================
 class Node {
   constructor(element) {
@@ -144,7 +147,7 @@ class BinarySearchTree {
     return false;
   }
 
-  getNodeToNodeDistnace(n1, n2) {
+  getNodeToNodeDistance(n1, n2) {
     var n1Path = this.getPathToNode(n1);
     var n2Path = this.getPathToNode(n2);
 
