@@ -85,83 +85,167 @@ the following pieces of data:
 address, and phone number into the system and look up customers using their
 phone numbers. Store this information in a hash table.
 
-var HashMapCustomers = new Map();
-
-function addCustomer(name, address, phoneNumber) {
-  var newCustomer = new Object;
-  newCustomer.name = name;
-  newCustomer.address = address;
-  newCustomer.phoneNumber = phoneNumber;
-  HashMapCustomers.set(phoneNumber, newCustomer);
-}
-
-function findCustomer(phoneNumber) {
-  return HashMapCustomers.get(phoneNumber);
-}
+See the `CustomerHashTable` class below.
 
 
 7. Build a system that allows a store owner to track their store's inventory
 using a hash table for storage.
 
-var HashMapInventory = new Map();
-
-function addItem(item) {
-  if (!HashMapInventory.get(item)){
-    HashMapInventory.set(item, 1);
-  } else {
-    HashMapInventory.set(item, HashMapInventory.get(item)+1);
-  }
-}
-
-function removeItem(item) {
-  if (HashMapInventory.get(item) > 0) {
-    HashMapInventory.set(item, HashMapInventory.get(item)-1);
-  }
-}
-
-function getItemAmount(item) {
-  if (!HashMapInventory.get(item)) {
-    return 0;
-  } else {
-    return HashMapInventory.get(item);
-  }
-}
+See the `InventoryHashTable` class below.
 
 
 8. Build a system that allows digital copies of newspapers to be entered and
 searched by publisher and publication date. Use hash tables to store the
 necessary data.
 
-var HashMapNewspapers = new Map();
+See the `NewspaperHashTable` class below.
 
-function addNewspaper(name, publisher, publicationDate) {
-  var newNewspaper = new Object;
-  newNewspaper.name = name;
-  newNewspaper.publisher = publisher;
-  newNewspaper.publicationDate = publicationDate;
-  HashMapNewspapers.set(name, newNewspaper);
+
+===============================================================================
+
+
+function hash (string, k) {
+  var hash = 0;
+  for (let i = 0; i < string.length ; i++) {
+    hash =+ string.charCodeAt(i);
+  }
+  return hash % k
 }
 
-function searchNewspapers(publisher, publicationDate) {
-  var HashMapMatchedNewspapers = new Map();
-  for (var [key, value] of HashMapNewspapers) {
-    if (isMatch(value, publisher, publicationDate)) {
-      HashMapMatchedNewspapers.set(key, value);
+function areEqualObjects (obj1, obj2) {
+  for (var key in obj1) {
+    if (!obj2[key]){
+      return false;
+    } else if (obj1[key] !== obj2[key]) {
+      return false;
     }
   }
-  return HashMapMatchedNewspapers;
+  for (var key in obj2) {
+    if (!obj1[key]){
+      return false;
+    }
+  }
+  return true;
 }
 
-function isMatch(value, publisher, publicationDate) {
-  if (value.publisher === publisher && value.publicationDate === publicationDate) {
-    return true;
-  } else if (publisher === "" && value.publicationDate === publicationDate) {
-    return true;
-  } else if (publicationDate === "" && value.publisher === publisher) {
-    return true;
-  } else if (publisher === "" && publicationDate === "") {
-    return true;
-  } else {
-    return false;
+class HashTable {
+  constructor () {
+    this.storage = [];
+    this.storageLimit = 100;
+  }
+
+  print(){
+    console.log(this.storage);
+  }
+
+  set(key, value) {
+    var keyString = key
+    if (typeof key !== "string") {
+      keyString = JSON.stringify(key);
+    }
+
+    var index = hash(keyString, this.storageLimit);
+
+    if (this.storage[index] === undefined) {
+      this.storage[index] = [];
+    } else {
+      for (let i = 0; i < this.storage[index].length; i++) {
+        var currentPair = this.storage[index][i];
+        if (currentPair[0] === key) {
+          currentPair[1] = value;
+          return;
+        }
+      }
+    }
+    this.storage[index].push([key, value]);
+  }
+
+  find(key) {
+    var keyString = key;
+    if (typeof key !== "string") {
+      keyString = JSON.stringify(key);
+    }
+    var index = hash(keyString, this.storageLimit);
+    if (this.storage[index] === undefined) {
+      return undefined;
+    }
+    var result = undefined;
+    for (let i = 0; i < this.storage[index].length; i++) {
+      var currentPair = this.storage[index][i];
+      if (currentPair[0] === key) {
+        result = currentPair[1];
+      } else if (typeof currentPair[0] === "object" && typeof key === "object") {
+        if (areEqualObjects(currentPair[0], key)) {
+          result = currentPair[1];
+        }
+      }
+    }
+    return result;
+  }
+}
+
+class CustomerHashTable extends HashTable {
+  constructor() {
+    super();
+  }
+
+  addCustomer(name, address, phoneNumber) {
+    var newCustomer = new Object;
+    newCustomer.name = name;
+    newCustomer.address = address;
+    newCustomer.phoneNumber = phoneNumber;
+    this.set(phoneNumber, newCustomer);
+  }
+}
+
+class InventoryHashTable extends HashTable {
+  constructor() {
+    super();
+  }
+
+  addItem(item) {
+    if (!this.find(item)){
+      this.set(item, 1);
+    } else {
+      this.set(item, this.find(item)+1);
+    }
+  }
+
+  removeItem(item) {
+    if (this.find(item) > 0) {
+      this.set(item, this.find(item)-1);
+    }
+  }
+
+  getItemAmount(item) {
+    if (!this.find(item)) {
+      return 0;
+    } else {
+      return this.find(item);
+    }
+  }
+}
+
+class NewspaperHashTable extends HashTable {
+  constructor() {
+    super();
+  }
+
+  addPaper(name, publisher, publicationDate) {
+    var newNewspaper = new Object;
+    newNewspaper.name = name;
+    newNewspaper.publisher = publisher;
+    newNewspaper.publicationDate = publicationDate;
+    var key = new Object;
+    key.publisher = publisher;
+    key.publicationDate = publicationDate;
+    this.set(key, newNewspaper);
+  }
+
+  findPaper(publisher, publicationDate) {
+    var key = new Object;
+    key.publisher = publisher;
+    key.publicationDate = publicationDate;
+    return this.find(key);
   }
 }
