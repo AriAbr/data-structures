@@ -189,12 +189,8 @@ class CustomerHashTable extends HashTable {
     super();
   }
 
-  addCustomer(name, address, phoneNumber) {
-    var newCustomer = new Object;
-    newCustomer.name = name;
-    newCustomer.address = address;
-    newCustomer.phoneNumber = phoneNumber;
-    this.set(phoneNumber, newCustomer);
+  addCustomer(customerObject) {
+    this.set(customerObject.phoneNumber, customerObject);
   }
 }
 
@@ -231,21 +227,51 @@ class NewspaperHashTable extends HashTable {
     super();
   }
 
-  addPaper(name, publisher, publicationDate) {
-    var newNewspaper = new Object;
-    newNewspaper.name = name;
-    newNewspaper.publisher = publisher;
-    newNewspaper.publicationDate = publicationDate;
+  addPaper(paperObject) {
     var key = new Object;
-    key.publisher = publisher;
-    key.publicationDate = publicationDate;
-    this.set(key, newNewspaper);
-  }
-
-  findPaper(publisher, publicationDate) {
-    var key = new Object;
-    key.publisher = publisher;
-    key.publicationDate = publicationDate;
-    return this.find(key);
+    key.publisher = paperObject.publisher;
+    key.publicationDate = paperObject.publicationDate;
+    this.set(key, paperObject);
   }
 }
+
+console.log('----testing customer table-----')
+
+let testCustomerTable = new CustomerHashTable();
+var testCustomer = new Object;
+testCustomer.name = 'Jim';
+testCustomer.phoneNumber = '6549521654';
+testCustomer.address = '42 Wallaby Way';
+
+testCustomerTable.addCustomer(testCustomer);
+console.log(testCustomerTable.find('6549521654'));
+
+console.log('----testing inventory table-----')
+
+let testInventoryTable = new InventoryHashTable();
+
+testInventoryTable.addItem('potatoes');
+console.log(`We now have ${testInventoryTable.getItemAmount('potatoes')} potatoes and ${testInventoryTable.getItemAmount('apples')} apples.`);
+testInventoryTable.addItem('apples');
+console.log(`We now have ${testInventoryTable.getItemAmount('potatoes')} potatoes and ${testInventoryTable.getItemAmount('apples')} apples.`);
+testInventoryTable.addItem('potatoes');
+console.log(`We now have ${testInventoryTable.getItemAmount('potatoes')} potatoes and ${testInventoryTable.getItemAmount('apples')} apples.`);
+testInventoryTable.removeItem('potatoes');
+console.log(`We now have ${testInventoryTable.getItemAmount('potatoes')} potatoes and ${testInventoryTable.getItemAmount('apples')} apples.`);
+
+console.log('----testing newspaper table-----')
+let testNewsTable = new NewspaperHashTable();
+var testPaper = new Object;
+testPaper.publisher = 'LV Review Journal';
+testPaper.publicationDate = '09-25-1993';
+testPaper.name = 'Heavy Traffic due to major road work';
+
+var testKey = new Object;
+testKey.publisher = 'LV Review Journal';
+testKey.publicationDate = '09-25-1993';
+
+testNewsTable.addPaper(testPaper);
+
+console.log(testNewsTable.find(testKey));
+
+console.log('--------------')
